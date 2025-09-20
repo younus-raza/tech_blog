@@ -1,4 +1,10 @@
 baseURL = "https://younusraza.tech/"
 languageCode = "en-us"
-title = "Younus Raza Tech Blog"
+title = "Technology Blog"
 theme = "zen"
+
+[params]
+logo = true
+logopath = "images/logo.svg"
+logowidth = "200"
+logoheight = "50"

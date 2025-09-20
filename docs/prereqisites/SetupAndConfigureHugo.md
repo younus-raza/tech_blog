@@ -4,6 +4,6 @@
 brew install imagemagick
 # Make 16x16 favicon 
 cd assets/images
-magick my_logo_favicon.png -resize 16x16 -filter Lanczos favicon.ico
+magick YounusRaza_Logo_40x40.png -resize 16x16 -filter Lanczos favicon.ico
 
 ```
