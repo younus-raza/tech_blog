@@ -1,0 +1,24 @@
+@startuml 
+    !theme sketchy-outline
+    title Exception Storm
+    skinparam titleFontName "Cambria"
+    skinparam titleFontSize 20
+    skinparam defaultFontColor #004AAD
+    skinparam backgroundColor #F7F6F1
+    ' Set default border color for activity boxes  
+    skinparam activityBorderColor #004AAD
+    skinparam titleBorderColor #004AAD
+    ' Title box border 
+    skinparam titleBackgroundColor #ffde59
+    ' Arrow styling
+    skinparam ArrowColor #38b6ff
+    skinparam ArrowFontColor #38b6ff
+    
+    start
+       'Trigger:A surge of exceptions'
+        --> The Snowball:Stack Trace Creation on each Exception
+        --> Memory Leak:Logging frameworks capture exceptions
+        --> Log Buffer Backlog: GC ubable to reclaim **unintentionally referenced** objects
+        --> Crash:JVM heap exhausted -> OutOfMemoryError -> System Crash
+    stop
+@enduml
