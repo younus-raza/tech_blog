@@ -3,8 +3,48 @@ languageCode = "en-us"
 title = "Technology Blog"
 theme = "zen"
 
+[author]
+  name = "Younus Raza"
+  bio = "Software engineer"
+  github = "https://github.com/younus-raza"
+  website = "https://younusraza.tech"
+
 [params]
 logo = true
 logopath = "images/logo.svg"
-logowidth = "200"
-logoheight = "50"
+logowidth = "512"
+logoheight = "512"
+
+[markup.highlight]
+  codeFences = true
+  guessSyntax = true
+  lineNos = false
+  style = "monokai"
+  wrap = true
+
+[params.giscus]
+enabled = true
+repo = "younus-raza/tech_blog"
+# gh api repos/younus-raza/tech_blog --jq '.node_id'
+repoId = "R_kgDOPz85EQ" 
+category = "Comments"
+# Category Id from cli
+# gh api graphql -f query='                    
+# {
+#  repository(owner: "younus-raza", name: "tech_blog") {
+#    discussionCategories(first: 10) {
+#      nodes {
+#        id
+#        name
+#      }
+#    }
+#  }
+# }'
+categoryId = "DIC_kwDOPz85Ec4Cvu1O"
+mapping = "pathname"
+reactionsEnabled = "1"
+emitMetadata = "0"
+inputPosition = "bottom"
+theme = "preferred_color_scheme"
+lang = "en"
+loading = "lazy"
