@@ -28,7 +28,7 @@ A surge of exceptions in a high-traffic API, even if harmless individually, can 
 2. **The Snowball:Stack Trace Creation**: Each unmanaged exception propagates up the call stack, generating a stack trace for each instance, consuming a substantial amount of heap memory in the process.
 3. **Memory Leak**: Logging frameworks, typically optimized for performance, log these exceptions and their memory-intensive stack traces. If these traces reference significant application objects (like user sessions or large datasets), these **unintentionally referenced** objects become ineligible for garbage collection.
    
-    Java Exception Logging pattern frameworks (Log4j, SLF4J, etc.) use:
+Java Exception Logging pattern frameworks (Log4j, SLF4J, etc.) use:
 {{< highlight java >}}
 // 'e' is the exception
 logger.error("Request failed for user: " + userId, e);
@@ -36,7 +36,7 @@ logger.error("Request failed for user: " + userId, e);
 4. **Log Buffer Backlog**: During the peak traffic period, the logging system struggles to write data to its designated storage quickly enough. Consequently, a substantial backlog of log events accumulates, all retaining references to the substantial, non-disposable exceptions.
 5. **Crash**: The amassed backlog of logged events exhausts the available heap memory. The Java Virtual Machine’s garbage collector is unable to clear these persistently referenced objects, leading to an OutOfMemoryError: Java Heap Space, and ultimately resulting in a system crash.
 
-![Exception Storm](/images/exception-storm-and-memory-leak/exception_storm.svg){ width=100% }
+![Exception Storm](/images/exception-storm-and-memory-leak/exception_storm.svg)
 ## Example to recreate exception storm
 The program floods the application with 100,000 "INVALID INPUT" strings, causing an error each time. The application attempts to capture and record each error, but the vast quantity overwhelms its capacity, leading to a system crash.
 

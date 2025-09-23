@@ -14,6 +14,8 @@ logo = true
 logopath = "images/logo.svg"
 logowidth = "512"
 logoheight = "512"
+cookieConsent = true
+googleAnalytics = "G-TNP30BNL3W"
 
 [markup.highlight]
   codeFences = true
@@ -48,3 +50,4 @@ inputPosition = "bottom"
 theme = "preferred_color_scheme"
 lang = "en"
 loading = "lazy"
+
