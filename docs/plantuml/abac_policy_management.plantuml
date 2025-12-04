@@ -1,0 +1,36 @@
+@startuml
+!theme sketchy-outline
+skinparam handwritten true
+title ABAC Policy Management
+skinparam titleFontName "Cambria"
+skinparam titleFontSize 20
+skinparam defaultFontColor #004AAD
+skinparam backgroundColor #F7F6F1
+skinparam activityBorderColor #004AAD
+skinparam titleBorderColor #004AAD
+skinparam titleBackgroundColor #ffde59
+skinparam ArrowColor #38b6ff
+skinparam ArrowFontColor #38b6ff
+
+participant "Control Plane Tool" as CP
+
+database "Policy Store (DB)" as DB
+
+box "Application Backend / Service" #FFDDCC
+    participant "Backend / Service" as BE
+    participant "Local ABAC Engine" as ABAC
+end box
+
+
+== <color:#FFB552>Define / Update Policies</color> ==
+CP -> DB: Create / Update policies for resources
+DB --> CP: Confirmation
+
+== <color:#FFB552>Policy Refresh in Services</color> ==
+ABAC -> DB: Fetch updated policies (on cache miss or scheduled refresh)
+DB --> ABAC: Return policies
+ABAC -> ABAC: Update local cache
+BE -> ABAC: Request policy evaluation (TAToken + Resource Attributes + Context)
+ABAC --> BE: Allow / Deny decision
+
+@enduml

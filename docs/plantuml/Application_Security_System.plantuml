@@ -1,0 +1,78 @@
+@startuml
+!theme sketchy-outline
+!option handwritten true
+title Application Deployment & AuthN/AuthZ Components
+skinparam titleFontName "Cambria"
+skinparam titleFontSize 20
+skinparam defaultFontColor #004AAD
+skinparam backgroundColor #F7F6F1
+skinparam activityBorderColor #004AAD
+skinparam titleBorderColor #004AAD
+skinparam titleBackgroundColor #ffde59
+skinparam ArrowColor #38b6ff
+skinparam ArrowFontColor #38b6ff
+
+left to right direction
+
+' --- Client Layer ---
+node "Client Layer" #E0F7FA {
+    rectangle "Browser / Mobile App" as BAPP
+    rectangle "Backend Client" as BCLIENT
+}
+
+' --- API Gateway ---
+node "API Gateway" #FFF8E1 {
+    component APIGW as "API Gateway / AuthN Proxy"
+}
+
+' --- Application Services Layer ---
+node "Application Services" #FFF3E0 {
+    node SVC1 {
+        component LOGIC1 as "Business Logic"
+        component ABAC1 as "Local ABAC Engine" #F7F0E0
+    }
+    node SVC2 {
+        component LOGIC2 as "Business Logic"
+        component ABAC2 as "Local ABAC Engine" #F7F0E0
+    }
+}
+
+' --- TA Identity Provider ---
+node "TA Identity Provider" #E8F5E9 {
+    component TAIDP as "Transitive AuthN Service"
+}
+
+' --- Control Plane / Policy Management ---
+node "Control Plane" #FFE0B2 {
+    component CP as "Policy Control Tool"
+    database DB as "Policy Store"
+}
+
+' --- Audit System ---
+node "Audit System" #E1F5FE {
+    database AUDIT as "Central Audit Logs"
+}
+
+' --- Flows ---
+BAPP --> APIGW: User Request / Access Token
+BCLIENT --> APIGW: Backend Request (ClientID + Signature)
+APIGW --> TAIDP: Exchange Access / Client Token for TAToken
+TAIDP --> APIGW: Short-lived TAToken
+APIGW --> SVC1: Forward request with TAToken
+SVC1 --> ABAC1: Evaluate request
+ABAC1 --> SVC1: Allow / Deny
+SVC1 --> SVC2: Downstream call with TAToken
+SVC2 --> ABAC2: Evaluate request
+ABAC2 --> SVC2: Allow / Deny
+
+' Control Plane interactions
+ABAC1 -[#FFA500,dashed]-> DB: Fetch / refresh policies
+ABAC2 -[#FFA500,dashed]-> DB: Fetch / refresh policies
+CP -[#FFA500,dashed]-> DB: Create / update policies
+
+' Audit logging
+SVC1 -[#4CAF50]-> AUDIT: Publish security event
+SVC2 -[#4CAF50]-> AUDIT: Publish security event
+APIGW -[#4CAF50]-> AUDIT: Publish security event
+
+@enduml

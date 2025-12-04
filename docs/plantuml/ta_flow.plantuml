@@ -1,0 +1,46 @@
+@startuml
+!theme sketchy-outline
+skinparam handwritten true
+title Transitive Authentication Flow
+skinparam titleFontName "Cambria"
+skinparam titleFontSize 20
+skinparam defaultFontColor #004AAD
+skinparam backgroundColor #F7F6F1
+skinparam activityBorderColor #004AAD
+skinparam titleBorderColor #004AAD
+skinparam titleBackgroundColor #ffde59
+skinparam ArrowColor #38b6ff
+skinparam ArrowFontColor #38b6ff
+skinparam SequenceGroupBackgroundColor #FFB552
+'skinparam SequenceGroupFontColor #FFB552
+skinparam SequenceGroupBorderColor #FFB552
+
+actor Client as C
+participant "Browser / Mobile" as B
+participant "Application Backend" as BE
+participant "Downstream Service" as DS
+participant "TA Identity Provider (TA-IDP)" as TAIDP
+participant "Backend Service" as BS
+
+== <color:#FFB552>Authentication + Access Token Exchange</color> ==
+alt  User / AI Agent Request
+    C -> B: Open App
+    B -> BE: Request with Access Token
+    BE -> BE: Validate Access Token
+    BE -> TAIDP: Exchange Access Token for TAToken
+    TAIDP --> BE: Short-lived TAToken (JWT with user ID + allowed boundaries)
+    BE -> BE: Store TAToken for request
+else Backend Service Request
+    BS -> BE: Request with Client ID + HMAC signature
+    BE -> BE: Verify signature using Client Secret
+    BE -> TAIDP: Exchange Client ID for TAToken
+    TAIDP --> BE: Short-lived TAToken (JWT with service ID + allowed boundaries)
+    BE -> BE: Store TAToken for request
+end
+
+== <color:#FFB552>Request to Downstream Service</color> ==
+BE -> DS: Request with TAToken in request header
+DS -> DS: Validate TAToken
+DS --> BE: Response
+
+@enduml

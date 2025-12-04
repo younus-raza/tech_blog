@@ -1,0 +1,45 @@
+@startuml
+!theme sketchy-outline
+skinparam handwritten true
+title Authentication Flow: Human, AI, and Backend Services
+skinparam titleFontName "Cambria"
+skinparam titleFontSize 20
+skinparam defaultFontColor #004AAD
+skinparam backgroundColor #F7F6F1
+' Set default border color for activity boxes  
+skinparam activityBorderColor #004AAD
+skinparam titleBorderColor #004AAD
+' Title box border 
+skinparam titleBackgroundColor #ffde59
+' Arrow styling
+skinparam ArrowColor #38b6ff
+skinparam ArrowFontColor #38b6ff
+actor Client as C
+participant "Browser / Mobile" as B
+participant "Identity Provider (OIDC)" as IdP
+participant "Application Backend" as BE
+participant "Backend Service" as BS
+
+== <color:#FFB552>Human User / AI Agent Authentication</color> ==
+C -> B: Open App
+B -> IdP: Authenticate via OIDC
+IdP --> B: ID Token, Access Token, Refresh Token
+B -> B: Store ID Token (sessionStorage)\nStore Access/Refresh Token (httpOnly cookies)
+B -> BE: Request with Access Token
+BE -> BE: Validate Access Token
+BE --> B: Response
+
+== <color:#FFB552> Backend Service Authentication</color> ==
+BS -> BE: Request with Client ID + HMAC signature
+BE -> BE: Verify signature using Client Secret
+BE --> BS: Response
+
+== <color:#FFB552>Token Refresh</color> ==
+B -> BE: Request with expired Access Token
+B -> B: HttpOnly Refresh Token cookie sent automatically
+BE -> IdP: POST /oauth/token with Refresh Token
+IdP --> BE: New Access Token
+BE --> B: Set new Access Token cookie
+BE -> BE: Retry original request
+
+@enduml

@@ -1,0 +1,51 @@
+@startuml
+!theme sketchy-outline
+skinparam handwritten true
+title Security Events Publishing Flow
+skinparam titleFontName "Cambria"
+skinparam titleFontSize 20
+skinparam defaultFontColor #004AAD
+skinparam backgroundColor #F7F6F1
+skinparam activityBorderColor #004AAD
+skinparam titleBorderColor #004AAD
+skinparam titleBackgroundColor #ffde59
+skinparam ArrowColor #38b6ff
+skinparam ArrowFontColor #38b6ff
+skinparam SequenceGroupBorderColor #FFB552
+skinparam SequenceGroupBackgroundColor #FFB552
+actor Client as C
+participant "Browser / Mobile" as B
+box "Application Backend / Service" #FFDDCC
+    participant "Backend / Service" as SVC
+    participant "Local ABAC Engine" as ABAC
+end box
+
+participant "Downstream Service" as DS
+database "Audit System / Event Store" as AUDIT
+
+== <color:#FFB552>Client Request</color> ==
+C -> B: Make request with TAToken
+B -> SVC: Forward request with TAToken
+
+== <color:#FFB552>Authorization & Event Publishing at Service</color> ==
+SVC -> ABAC: Evaluate request (TAToken + Resource + Context)
+ABAC -> ABAC: Check local policy cache
+alt Cache Miss
+    ABAC -> SVC: Fetch policies from Control Plane / DB
+    SVC --> ABAC: Return policies
+    ABAC -> ABAC: Update local cache
+end
+ABAC --> SVC: Allow / Deny decision
+SVC -> AUDIT: Publish security event record (identity, resource, policies, decision, trace_id)
+
+== <color:#FFB552>Downstream Service Authorization</color> ==
+SVC -> DS: Forward request with TAToken
+DS -> ABAC: Evaluate request
+ABAC --> DS: Allow / Deny decision
+DS -> AUDIT: Publish security event record (identity, resource, policies, decision, trace_id)
+
+== <color:#FFB552>Client Response</color> ==
+SVC --> B: Response
+B --> C: Response
+
+@enduml

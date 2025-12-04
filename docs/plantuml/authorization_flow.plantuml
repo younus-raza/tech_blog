@@ -1,0 +1,42 @@
+@startuml
+!theme sketchy-outline
+skinparam handwritten true
+title ABAC Flow with TAToken and Local Policy Engine
+skinparam titleFontName "Cambria"
+skinparam titleFontSize 20
+skinparam defaultFontColor #004AAD
+skinparam backgroundColor #F7F6F1
+skinparam activityBorderColor #004AAD
+skinparam titleBorderColor #004AAD
+skinparam titleBackgroundColor #ffde59
+skinparam ArrowColor #38b6ff
+skinparam ArrowFontColor #38b6ff
+skinparam SequenceGroupBorderColor #FFB552
+skinparam SequenceGroupBackgroundColor #FFB552
+
+actor Client as C
+participant "Browser / Mobile" as B
+
+box "Application Backend / Service" #FFDDCC
+    participant "Backend / Service" as BE
+    participant "Local ABAC Engine" as ABAC
+end box
+
+== <color:#FFB552>Client Request</color> ==
+C -> B: Make request with TAToken
+B -> BE: Forward request with TAToken
+
+database "Policy Store (DB)" as DB
+== <color:#FFB552>Local Policy Evaluation</color> ==
+BE -> ABAC: Evaluate request (TAToken + Resource Attributes + Context)
+ABAC -> ABAC: Check local policy cache
+alt Cache Miss or Refresh Needed
+    ABAC -> DB: Fetch relevant policies
+    DB --> ABAC: Return policies
+    ABAC -> ABAC: Update local cache
+end
+ABAC -> ABAC: Evaluate all applicable policies for resource
+ABAC --> BE: Allow / Deny decision
+BE --> B: Response to client
+
+@enduml
