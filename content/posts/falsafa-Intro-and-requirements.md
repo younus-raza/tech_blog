@@ -12,7 +12,7 @@ I aim to develop an AI companion capable of animating my beloved characters and 
 
 Falsafa means Philosopy in Urdu.
 
-## Functionsal Requirements
+## Functional Requirements
 
 1. **Uploading Content**:
     - Users should be able to submit their preferred literary works, such as books and poems, in text or pdf formats.
