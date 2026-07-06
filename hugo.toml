@@ -12,8 +12,8 @@ theme = "zen"
 [params]
 logo = true
 logopath = "images/logo.svg"
-logowidth = "512"
-logoheight = "512"
+logowidth = "120"
+logoheight = "120"
 cookieConsent = true
 googleAnalytics = "G-TNP30BNL3W"
 

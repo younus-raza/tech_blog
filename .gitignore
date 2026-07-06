@@ -2,4 +2,5 @@ themes/zen
 .hugo_build.lock
 public/
 resources/
+out/
 .DS_Store

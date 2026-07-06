@@ -1,0 +1,30 @@
+// Theme-wide tuning via Zen's CSS custom properties.
+// Found these in devtools under :root (_variables.scss).
+:root {
+  --base-line-height: 1.7;      // was 1.5 — the "dense paragraphs" fix
+  --max-line-width: 42rem;      // the measure; text AND figures share it
+  --fs-xxxxl: 2.25rem;          // was 3rem — tame the H1
+  --fs-xxxl: 1.75rem;           // step the scale down with it
+  --heading-line-height: 1.25;
+}
+
+.main {
+  figure {
+    margin: 2rem 0;
+    max-width: var(--max-line-width);  // follows the measure automatically
+
+    img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 6px;
+      display: block;
+    }
+
+    figcaption {
+      font-size: 0.875rem;
+      font-style: italic;
+      color: #666;
+      margin-top: 0.5rem;
+    }
+  }
+}
